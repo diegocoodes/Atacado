@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Heart, Menu, Package, ShoppingCart, UserRound, X } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { useCartStore } from "@/stores/cart-store";
 import { BrandMark } from "@/components/common/brand-mark";
@@ -12,6 +13,7 @@ const departments = ["Sorveteria", "Confeitaria", "Embalagens", "Food service"];
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
+  const reduceMotion = useReducedMotion();
   const mobilePanel = useRef<HTMLDivElement>(null);
   const menuButton = useRef<HTMLButtonElement>(null);
   const itemCount = useCartStore((state) => state.lines.reduce((total, line) => total + line.quantity, 0));
@@ -77,8 +79,15 @@ export function Header() {
           <Link href="#marcas">Marcas</Link>
           <Link href="#atendimento">Atendimento</Link>
         </div>
+        <AnimatePresence>
         {megaOpen && (
-          <div className="mega-menu">
+          <motion.div
+            className="mega-menu"
+            initial={reduceMotion ? false : { opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduceMotion ? undefined : { opacity: 0, y: -6 }}
+            transition={{ duration: reduceMotion ? 0 : 0.2 }}
+          >
             <div className="shell mega-grid">
               {departments.map((department, index) => (
                 <div key={department}>
@@ -88,11 +97,23 @@ export function Header() {
                 </div>
               ))}
             </div>
-          </div>
+          </motion.div>
         )}
+        </AnimatePresence>
       </nav>
+      <AnimatePresence>
       {mobileOpen && (
-        <div ref={mobilePanel} className="mobile-panel" role="dialog" aria-modal="true" aria-label="Menu principal">
+        <motion.div
+          ref={mobilePanel}
+          className="mobile-panel"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Menu principal"
+          initial={reduceMotion ? false : { x: "-100%" }}
+          animate={{ x: 0 }}
+          exit={reduceMotion ? undefined : { x: "-100%" }}
+          transition={{ duration: reduceMotion ? 0 : 0.26, ease: [0.22, 1, 0.36, 1] }}
+        >
           <div className="mobile-panel-head"><BrandMark /><button className="icon-button" onClick={() => setMobileOpen(false)} aria-label="Fechar menu"><X /></button></div>
           <nav aria-label="Navegação mobile">
             <Link href="/categoria">Todas as categorias</Link>
@@ -101,8 +122,9 @@ export function Header() {
             <Link href="/minha-conta">Minha conta</Link>
             <Link href="#atendimento">Atendimento</Link>
           </nav>
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </header>
   );
 }

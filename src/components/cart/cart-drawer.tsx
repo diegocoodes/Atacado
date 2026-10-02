@@ -3,12 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef } from "react";
 import { formatCurrency } from "@/lib/format";
 import { useCartStore } from "@/stores/cart-store";
 
 export function CartDrawer() {
   const { isOpen, lines, closeCart, updateQuantity, removeItem } = useCartStore();
+  const reduceMotion = useReducedMotion();
   const closeButton = useRef<HTMLButtonElement>(null);
   const drawer = useRef<HTMLElement>(null);
   const total = lines.reduce((sum, line) => sum + line.saleOption.price * line.quantity, 0);
@@ -40,11 +42,30 @@ export function CartDrawer() {
     };
   }, [isOpen, closeCart]);
 
-  if (!isOpen) return null;
   return (
+    <AnimatePresence>
+    {isOpen && (
     <div className="drawer-layer" role="presentation">
-      <button className="drawer-backdrop" onClick={closeCart} aria-label="Fechar carrinho" />
-      <aside ref={drawer} className="cart-drawer" role="dialog" aria-modal="true" aria-labelledby="cart-title">
+      <motion.button
+        className="drawer-backdrop"
+        onClick={closeCart}
+        aria-label="Fechar carrinho"
+        initial={reduceMotion ? false : { opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={reduceMotion ? undefined : { opacity: 0 }}
+        transition={{ duration: reduceMotion ? 0 : 0.2 }}
+      />
+      <motion.aside
+        ref={drawer}
+        className="cart-drawer"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="cart-title"
+        initial={reduceMotion ? false : { x: "100%" }}
+        animate={{ x: 0 }}
+        exit={reduceMotion ? undefined : { x: "100%" }}
+        transition={{ duration: reduceMotion ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] }}
+      >
         <div className="drawer-head"><div><small>Seu pedido</small><h2 id="cart-title">Carrinho <span>{lines.length}</span></h2></div><button ref={closeButton} onClick={closeCart} aria-label="Fechar carrinho"><X /></button></div>
         {lines.length === 0 ? (
           <div className="empty-cart"><ShoppingBag /><h3>Seu carrinho está vazio.</h3><p>Encontre os produtos que sua produção precisa.</p><button className="primary-button" onClick={closeCart}>Ver produtos</button></div>
@@ -63,7 +84,9 @@ export function CartDrawer() {
             <div className="drawer-summary"><div><span>Subtotal</span><strong>{formatCurrency(total)}</strong></div><p>Frete e descontos calculados na finalização.</p><Link href="/carrinho" className="primary-button" onClick={closeCart}>Finalizar pedido</Link><button className="text-button" onClick={closeCart}>Continuar comprando</button></div>
           </>
         )}
-      </aside>
+      </motion.aside>
     </div>
+    )}
+    </AnimatePresence>
   );
 }

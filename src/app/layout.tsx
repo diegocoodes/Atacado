@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import "@fontsource-variable/manrope";
+import "@fontsource/barlow-condensed/600.css";
+import "@fontsource/barlow-condensed/700.css";
+import "@fontsource/barlow-condensed/800.css";
 import "./globals.css";
 import { CartDrawer } from "@/components/cart/cart-drawer";
 import { WhatsAppButton } from "@/components/common/whatsapp-button";

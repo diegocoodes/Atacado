@@ -4,6 +4,7 @@ import { CategoryGrid } from "@/components/home/category-grid";
 import { CommercialStrip } from "@/components/home/commercial-strip";
 import { Hero } from "@/components/home/hero";
 import { ProductSection } from "@/components/home/product-section";
+import { Reveal } from "@/components/motion/reveal";
 
 const organizationSchema = {
   "@context": "https://schema.org",
@@ -18,12 +19,12 @@ export default function Home() {
     <main id="conteudo">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema).replace(/</g, "\\u003c") }} />
       <Hero />
-      <CommercialStrip />
-      <CategoryGrid />
-      <ProductSection />
-      <ProductSection offers />
-      <BusinessSegments />
-      <Brands />
+      <Reveal><CommercialStrip /></Reveal>
+      <Reveal><CategoryGrid /></Reveal>
+      <Reveal><ProductSection /></Reveal>
+      <Reveal><ProductSection offers /></Reveal>
+      <Reveal><BusinessSegments /></Reveal>
+      <Reveal><Brands /></Reveal>
     </main>
   );
 }
